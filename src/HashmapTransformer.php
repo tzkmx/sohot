@@ -5,6 +5,7 @@ namespace Jefrancomix\Sohot;
 class HashmapTransformer
 {
     protected $rules;
+    protected $transformed;
     
     public function __construct($rules)
     {
@@ -13,20 +14,25 @@ class HashmapTransformer
     
     public function transform($hashmap)
     {
-        $transformed = [];
-        $rulesKeys = array_keys($this->rules);
-        foreach($hashmap as $key => $value) {
-            if(in_array($key, $rulesKeys)) {
-
-                $rule = $this->rules[$key];
-                if(is_array($rule) && is_callable($rule[1])) {
-                    $transformed[$rule[0]] = call_user_func($rule[1], $hashmap);
-                }
-                if(is_string($rule)) {
-                    $transformed[$this->rules[$key]] = $value;
-                }
+        $this->transformed = [];
+        array_walk($this->rules, function($rule, $key, $hashmap) {
+            if(array_key_exists($key, $hashmap)) {
+                $this->applyRule($rule, $key, $hashmap);
             }
-        }
-        return $transformed;
+        }, $hashmap);
+        return $this->transformed;
     }
+
+    protected function applyRule($rule, $key, $hashmap)
+    {
+        $hashmapValueAtKey = $hashmap[$key];
+        if(is_array($rule) && is_callable($rule[1])) {
+            $this->transformed[$rule[0]] = call_user_func($rule[1], $hashmapValueAtKey, $hashmap);
+        }
+        if(is_string($rule)) {
+            $this->transformed[$rule] = $hashmapValueAtKey;
+        }
+    }
+
+
 }

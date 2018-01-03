@@ -21,8 +21,8 @@ class SimpleTransformationTest extends TestCase
     {
         $ht = new HT([
               'tribe' => 'nation',
-              'roots' => ['mixOf', function($origin) {
-                   return implode(', ', $origin['roots']); 
+              'roots' => ['mixOf', function($subkey) {
+                   return implode(', ', $subkey);
                }],
         ]);
 
