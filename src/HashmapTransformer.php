@@ -33,6 +33,4 @@ class HashmapTransformer
             $this->transformed[$rule] = $hashmapValueAtKey;
         }
     }
-
-
 }
