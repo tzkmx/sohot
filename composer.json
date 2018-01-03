@@ -1,0 +1,19 @@
+{
+    "name": "jefrancomix/sohot",
+    "description": "Reusing logic to transform Simple HashMap (aka associative arrays)",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^6.5"
+    },
+    "autoload": {
+        "psr-4": { "Jefrancomix\\Sohot\\": "src/" }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jesus E. Franco Martinez",
+            "email": "tezcatl@fedoraproject.org"
+        }
+    ],
+    "require": {}
+}
