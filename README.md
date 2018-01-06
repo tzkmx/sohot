@@ -10,7 +10,7 @@ key mapping and callbacks.
 ## Simple key mapping
 
 ```php
-use Jefrancomix\Sohot\HashmapTransformer as HT;
+use Jefrancomix\Sohot\HashmapMapper as HM;
 
 $source = ['origin' => 'Africa'];
 
@@ -19,8 +19,8 @@ $source = ['origin' => 'Africa'];
  * so I pass a simple dictionary mapping
  */
 
-$transformer = new HT(['origin' => 'roots']);
-$target = $transformer->transform($source);
+$mapper = new HM(['origin' => 'roots']);
+$target = $mapper->map($source);
 
 var_dump($target);
 /*
@@ -40,7 +40,7 @@ that will receive as arguments:
 - the whole hashmap if you need other values of it
 
 ```php
-use Jefrancomix\Sohot\HashmapTransformer as HT;
+use Jefrancomix\Sohot\HashmapMapper as HM;
 
 $source = [
     'date' => [
@@ -57,7 +57,7 @@ $source = [
  * and the key I want to appear in the target
  */
 
-$transformer = new HT([
+$mapper = new HM([
     'place' => 'Caso CIDH',
     'date' => [
         'fecha',
@@ -69,14 +69,16 @@ $transformer = new HT([
     ],
 ]);
 
-$target = $transformer->transform($source);
+$target = $mapper->map($source);
 
 var_dump($target);
 /*
  * It results in:
- array(1) {
-     ["roots"]=>
-     string(6) "Africa"
+ array(2) {
+     ["Caso CIDH"]=>
+     string(19) "San Salvador Atenco",
+     ["fecha"]=>
+     string(10) "2006-05-04"
  }
  */
 ```

@@ -2,7 +2,7 @@
 
 namespace Jefrancomix\Sohot;
 
-class HashmapTransformer
+class HashmapMapper implements HashmapMapperInterface
 {
     protected $rules;
     protected $transformed;
@@ -12,7 +12,7 @@ class HashmapTransformer
         $this->rules = $rules;
     }
     
-    public function transform($hashmap)
+    public function map($hashmap)
     {
         $this->transformed = [];
         array_walk($this->rules, function($rule, $key, $hashmap) {

@@ -2,34 +2,34 @@
 
 namespace Jefrancomix\Sohot\Test;
 use PHPUnit\Framework\TestCase;
-use Jefrancomix\Sohot\HashmapTransformer as HT;
+use Jefrancomix\Sohot\HashmapMapper as HM;
 
 class SimpleTransformationTest extends TestCase
 {
-    public function testSimplestTransform()
+    public function testSimplestMapping()
     {
-        $ht = new HT(['origin' => 'roots']);
+        $hm = new HM(['origin' => 'roots']);
 
         $origin = [ 'origin' => 'Africa' ];
         $expected = ['roots' => 'Africa'];
 
-        $transformed = $ht->transform($origin);
+        $transformed = $hm->map($origin);
 
         $this->assertEquals($expected, $transformed);
     }
 
     /**
-     * @dataProvider examplesOfCallbackTransforms
+     * @dataProvider examplesOfCallbackMappings
      */
-    public function testCallableTransform($source, $transformRules, $expected)
+    public function testCallableMapping($source, $transformRules, $expected)
     {
-        $ht = new HT($transformRules);
+        $hm = new HM($transformRules);
 
-        $transformed = $ht->transform($source);
+        $transformed = $hm->map($source);
 
         $this->assertEquals($expected, $transformed);
     }
-    public function examplesOfCallbackTransforms()
+    public function examplesOfCallbackMappings()
     {
         return [
             'implode' => [
@@ -83,7 +83,7 @@ class SimpleTransformationTest extends TestCase
             'yearOfBirth' => 1981,
             'yearOfDeath' => 2006,
         ];
-        $ht = new HT([
+        $hm = new HM([
             'name' => 'alias',
             'birth' => [ 'yearOfBirth', [$mockAux, 'getBirth'] ],
             'death' => [ 'yearOfDeath', [$mockAux, 'getDeath'] ],
@@ -103,7 +103,7 @@ class SimpleTransformationTest extends TestCase
                 $this->equalTo($source)
             )->willReturn(2006);
 
-        $target = $ht->transform($source);
+        $target = $hm->map($source);
 
         $this->assertEquals($expectedTarget, $target);
     }
