@@ -107,4 +107,43 @@ class SimpleTransformationTest extends TestCase
 
         $this->assertEquals($expectedTarget, $target);
     }
+
+    public function testReuseHashMapperAsRuleMapper()
+    {
+        $source = [
+            'sourceKey' => ['value' => 'to pass to HashMapper']
+        ];
+        $mockMapper = $this->createMock(HM::class);
+        $mockMapper->expects($this->once())
+            ->method('map')
+            ->with(
+                $this->equalTo(['value' => 'to pass to HashMapper']),
+                $this->equalTo($source)
+            );
+
+        $realMapper = new HM([
+            'sourceKey' => ['_', $mockMapper]
+        ]);
+
+        $realMapper->map($source);
+    }
+
+    public function testHashMapperReusedReturnsOk()
+    {
+        $source = [
+            'sourceKey' => [ 'value' => 'to pass to HashMapper' ],
+        ];
+        $childMapper = new HM([
+            'value' => ['targetValue', function($sourceValue){
+                return str_replace('to pass', 'passed', $sourceValue);
+            }],
+        ]);
+        $parentMapper = new HM([
+            'sourceKey' => ['targetKey', $childMapper]
+        ]);
+        $expected = [
+            'targetKey' => ['targetValue' => 'passed to HashMapper']
+        ];
+        $this->assertEquals($expected, $parentMapper->map($source));
+    }
 }

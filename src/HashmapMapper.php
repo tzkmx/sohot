@@ -12,25 +12,31 @@ class HashmapMapper implements HashmapMapperInterface
         $this->rules = $rules;
     }
     
-    public function map($hashmap)
+    public function map($hashmap, $sourceContext = null)
     {
         $this->transformed = [];
-        array_walk($this->rules, function($rule, $key, $hashmap) {
+        array_walk($this->rules, function($rule, $key, $hashmap) use($sourceContext) {
             if(array_key_exists($key, $hashmap)) {
-                $this->applyRule($rule, $key, $hashmap);
+                $this->applyRule($rule, $key, $hashmap, $sourceContext);
             }
         }, $hashmap);
         return $this->transformed;
     }
 
-    protected function applyRule($rule, $key, $hashmap)
+    protected function applyRule($rule, $key, $hashmap, $sourceContext = null)
     {
         $hashmapValueAtKey = $hashmap[$key];
+        if(is_null($sourceContext)) {
+            $sourceContext = $hashmap;
+        }
         if(is_array($rule) && is_callable($rule[1])) {
-            $this->transformed[$rule[0]] = call_user_func($rule[1], $hashmapValueAtKey, $hashmap);
+            $this->transformed[$rule[0]] = call_user_func($rule[1], $hashmapValueAtKey, $sourceContext);
         }
         if(is_string($rule)) {
             $this->transformed[$rule] = $hashmapValueAtKey;
+        }
+        if(is_array($rule) && $rule[1] instanceof HashmapMapperInterface) {
+            $this->transformed[$rule[0]] = $rule[1]->map($hashmapValueAtKey, $sourceContext);
         }
     }
 }
