@@ -4,8 +4,18 @@ namespace Jefrancomix\Sohot;
 
 class HashmapMapper implements HashmapMapperInterface
 {
+    /**
+     * @var mixed associative array of sourceKeys (strings) to rules
+     */
     protected $rules;
-    protected $transformed;
+    /**
+     * @var array that will store mapped keys from source
+     */
+    protected $mapped;
+    /**
+     * @var string with the name of matched key in source hashmap
+     */
+    protected $sourceKeyMatched;
     
     public function __construct($rules)
     {
@@ -14,29 +24,48 @@ class HashmapMapper implements HashmapMapperInterface
     
     public function map($hashmap, $sourceContext = null)
     {
-        $this->transformed = [];
+        $this->mapped = [];
         array_walk($this->rules, function($rule, $key, $hashmap) use($sourceContext) {
             if(array_key_exists($key, $hashmap)) {
-                $this->applyRule($rule, $key, $hashmap, $sourceContext);
+                $this->sourceKeyMatched = $key;
+                $this->applyRule($rule, $hashmap, $sourceContext);
             }
         }, $hashmap);
-        return $this->transformed;
+        return $this->mapped;
     }
 
-    protected function applyRule($rule, $key, $hashmap, $sourceContext = null)
+    protected function applyRule($rule, $hashmap, $sourceContext = null)
     {
-        $hashmapValueAtKey = $hashmap[$key];
+        if(is_array($rule)) {
+            $this->applyConsRule($rule[0], $rule[1], $hashmap, $sourceContext);
+        }
+        if(is_string($rule)) {
+            $this->mapped[$rule] = $hashmap[$this->sourceKeyMatched];
+        }
+    }
+    protected function applyConsRule($targetKey, $actualRule, $hashmap, $sourceContext)
+    {
         if(is_null($sourceContext)) {
             $sourceContext = $hashmap;
         }
-        if(is_array($rule) && is_callable($rule[1])) {
-            $this->transformed[$rule[0]] = call_user_func($rule[1], $hashmapValueAtKey, $sourceContext);
+        $hashmapValueAtKey = $hashmap[$this->sourceKeyMatched];
+        if(is_callable($actualRule)) {
+            $this->receiveDataReturnedByRule($targetKey, call_user_func($actualRule, $hashmapValueAtKey, $sourceContext));
         }
-        if(is_string($rule)) {
-            $this->transformed[$rule] = $hashmapValueAtKey;
-        }
-        if(is_array($rule) && $rule[1] instanceof HashmapMapperInterface) {
-            $this->transformed[$rule[0]] = $rule[1]->map($hashmapValueAtKey, $sourceContext);
+        if($actualRule instanceof HashmapMapperInterface) {
+            $this->receiveDataReturnedByRule($targetKey, $actualRule->map($hashmapValueAtKey, $sourceContext));
         }
     }
+
+    protected function receiveDataReturnedByRule($targetKey, $returnValue)
+    {
+        if($targetKey === '...') {
+            foreach($returnValue as $targetKey => $value) {
+                $this->mapped[$targetKey] = $value;
+            }
+            return;
+        }
+        $this->mapped[$targetKey] = $returnValue;
+    }
+
 }

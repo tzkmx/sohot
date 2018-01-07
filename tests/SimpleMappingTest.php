@@ -4,7 +4,7 @@ namespace Jefrancomix\Sohot\Test;
 use PHPUnit\Framework\TestCase;
 use Jefrancomix\Sohot\HashmapMapper as HM;
 
-class SimpleTransformationTest extends TestCase
+class SimpleMappingTest extends TestCase
 {
     public function testSimplestMapping()
     {
