@@ -8,6 +8,7 @@ class HashmapMapper implements HashmapMapperInterface
      * @var mixed associative array of sourceKeys (strings) to rules
      */
     protected $rules;
+
     /**
      * @var array that will store mapped keys from source
      */
@@ -42,7 +43,7 @@ class HashmapMapper implements HashmapMapperInterface
             $this->implicitSpread = true;
         }
         if(isset($options['passNotMatchedKeys']) && $options['passNotMatchedKeys']) {
-            $this->passNotMatchedKeys = true;
+            $this->passNotMatchedKeys = $options['passNotMatchedKeys'];
         }
 
     }
@@ -50,7 +51,7 @@ class HashmapMapper implements HashmapMapperInterface
     public function map($hashmap, $sourceContext = null)
     {
         $this->mapped = [];
-        $this->maybePassToTargetUnMatchedKeys($hashmap);
+        $this->maybePassToTargetUnmatchedKeys($hashmap);
 
         array_walk($this->rules, function($rule, $key, $hashmap) use($sourceContext) {
             if(array_key_exists($key, $hashmap)) {
@@ -83,16 +84,17 @@ class HashmapMapper implements HashmapMapperInterface
 
     protected function applyConsRule($targetKey, $actualRule, $hashmap, $sourceContext)
     {
+        if(!is_string($targetKey)) {
+            return;
+        }
         if(is_null($sourceContext)) {
             $sourceContext = $hashmap;
         }
         $hashmapValueAtKey = $hashmap[$this->sourceKeyMatched];
-        if(is_callable($actualRule)) {
-            $this->receiveDataReturnedByRule($targetKey, call_user_func($actualRule, $hashmapValueAtKey, $sourceContext));
-        }
-        if($actualRule instanceof HashmapMapperInterface) {
-            $this->receiveDataReturnedByRule($targetKey, $actualRule->map($hashmapValueAtKey, $sourceContext));
-        }
+
+        $actualMapperRuleResult = $this->doCallActualMapperRule($actualRule, $hashmapValueAtKey, $sourceContext);
+
+        $this->receiveDataReturnedByRule($targetKey, $actualMapperRuleResult);
     }
 
     protected function receiveDataReturnedByRule($targetKey, $returnValue)
@@ -106,7 +108,17 @@ class HashmapMapper implements HashmapMapperInterface
         $this->mapped[$targetKey] = $returnValue;
     }
 
-    protected function maybePassToTargetUnMatchedKeys($hashmap)
+    protected function doCallActualMapperRule($actualRule, $hashmapValueAtKey, $sourceContext = null)
+    {
+        if(is_callable($actualRule)) {
+            return call_user_func($actualRule, $hashmapValueAtKey, $sourceContext);
+        }
+        if($actualRule instanceof HashmapMapperInterface) {
+            return $actualRule->map($hashmapValueAtKey, $sourceContext);
+        }
+    }
+
+    protected function maybePassToTargetUnmatchedKeys($hashmap)
     {
         if(!$this->passNotMatchedKeys) {
             return;
@@ -115,7 +127,19 @@ class HashmapMapper implements HashmapMapperInterface
             if(in_array($key, $ruleKeys)) {
                 return;
             }
-            $this->mapped[$key] = $value;
+            if(is_bool($this->passNotMatchedKeys)) {
+                $this->mapped[$key] = $value;
+            } else {
+                $mappedValueThrough = $this->doCallActualMapperRule($this->passNotMatchedKeys, $value);
+                $this->mapped[$key] = $mappedValueThrough;
+            }
         }, array_keys($this->rules));
+    }
+
+    public function getCollectionMapper()
+    {
+        return new self([], [
+            'passNotMatchedKeys' => $this,
+        ]);
     }
 }

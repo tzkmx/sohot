@@ -11,4 +11,6 @@ interface HashmapMapperInterface
      * @return mixed
      */
     public function map($object, $sourceContext = null);
+
+    public function getCollectionMapper();
 }
