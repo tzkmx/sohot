@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tzkmx/sohot.svg?branch=master)](https://travis-ci.org/tzkmx/sohot) [![Maintainability](https://api.codeclimate.com/v1/badges/bdc511cc3f3a39dca72b/maintainability)](https://codeclimate.com/github/tzkmx/sohot/maintainability)
+
 # Objective
 
 This is a minimalistic library aimed to reuse logic
@@ -83,4 +85,3 @@ var_dump($target);
  */
 ```
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/bdc511cc3f3a39dca72b/maintainability)](https://codeclimate.com/github/tzkmx/sohot/maintainability)
