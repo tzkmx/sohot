@@ -40,76 +40,11 @@ class SpreadMappingTest extends TestCase
         $this->assertEquals($expectedTarget, $target);
     }
 
-    public function testHashMapperReusedReturnsOk()
+    /**
+     * @dataProvider spreadMappingDataProvider
+     */
+    public function testHashMapperReusedReturnsOk($source, $expected)
     {
-        $source = [
-            'title' => 'Hola IA',
-            'link' => 'http://example.com/hola-ia/',
-            '_embedded' => [
-                'wp:featuredmedia' => [
-                    [
-                        'id' => 241239,
-                        'date' => '2017-12-27T13:52:15',
-                        'slug' => 'inteligencia-artificial',
-                        'type' => 'attachment',
-                        'link' => 'http://example.com/inteligencia-artificial/',
-                        'title' => [
-                            'rendered' => 'inteligencia artificial'
-                        ],
-                        'author' => 108,
-                        'caption' => [
-                            'rendered' => '<p>Inteligencia Artificial</p>\n'
-                        ],
-                        'alt_text' => 'Inteligencia Artificial.',
-                        'media_type' => 'image',
-                        'mime_type' => 'image/jpeg',
-                        'media_details' => [
-                            'width' => 700,
-                            'height' => 400,
-                            'file' => '2017/12/inteligencia-artificial.jpg',
-                            'sizes' => [
-                                'thumbnail' => [
-                                    'file' => 'inteligencia-artificial-500x400.jpg',
-                                    'width' => 500,
-                                    'height' => 400,
-                                    'mime_type' => 'image/jpeg',
-                                    'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial-500x400.jpg'
-                                ],
-                                'medium' => [
-                                    'file' => 'inteligencia-artificial-300x171.jpg',
-                                    'width' => 300,
-                                    'height' => 171,
-                                    'mime_type' => 'image/jpeg',
-                                    'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial-300x171.jpg'
-                                ],
-                                'full' => [
-                                    'file' => 'inteligencia-artificial.jpg',
-                                    'width' => 700,
-                                    'height' => 400,
-                                    'mime_type' => 'image/jpeg',
-                                    'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial.jpg'
-                                ]
-                            ],
-                            'image_meta' => [
-                                'aperture' => '0',
-                                'credit' => '',
-                                'camera' => '',
-                                'caption' => '',
-                                'created_timestamp' => '0',
-                                'copyright' => '',
-                                'focal_length' => '0',
-                                'iso' => '0',
-                                'shutter_speed' => '0',
-                                'title' => '',
-                                'orientation' => '0',
-                                'keywords' => []
-                            ]
-                        ],
-                        'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial.jpg',
-                    ]
-                ],
-            ]
-        ];
         $mediaMapper = new HM([
             'wp:featuredmedia' => ['...', function($featuredMedia){
                 $media = $featuredMedia[0];
@@ -129,13 +64,89 @@ class SpreadMappingTest extends TestCase
             'link' => 'permalink',
             '_embedded' => ['...', $mediaMapper],
         ]);
-        $expected = [
-            'title' => 'Hola IA',
-            'permalink' => 'http://example.com/hola-ia/',
-            'img' => 'http://example.com/media/2017/12/inteligencia-artificial-500x400.jpg',
-            'alttext' => 'Inteligencia Artificial.',
-        ];
 
         $this->assertEquals($expected, $postMapper->map($source));
-    }    
+    }
+
+    public function spreadMappingDataProvider()
+    {
+        return [
+          [
+              [
+                  'title' => 'Hola IA',
+                  'link' => 'http://example.com/hola-ia/',
+                  '_embedded' => [
+                      'wp:featuredmedia' => [
+                          [
+                              'id' => 241239,
+                              'date' => '2017-12-27T13:52:15',
+                              'slug' => 'inteligencia-artificial',
+                              'type' => 'attachment',
+                              'link' => 'http://example.com/inteligencia-artificial/',
+                              'title' => [
+                                  'rendered' => 'inteligencia artificial'
+                              ],
+                              'author' => 108,
+                              'caption' => [
+                                  'rendered' => '<p>Inteligencia Artificial</p>\n'
+                              ],
+                              'alt_text' => 'Inteligencia Artificial.',
+                              'media_type' => 'image',
+                              'mime_type' => 'image/jpeg',
+                              'media_details' => [
+                                  'width' => 700,
+                                  'height' => 400,
+                                  'file' => '2017/12/inteligencia-artificial.jpg',
+                                  'sizes' => [
+                                      'thumbnail' => [
+                                          'file' => 'inteligencia-artificial-500x400.jpg',
+                                          'width' => 500,
+                                          'height' => 400,
+                                          'mime_type' => 'image/jpeg',
+                                          'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial-500x400.jpg'
+                                      ],
+                                      'medium' => [
+                                          'file' => 'inteligencia-artificial-300x171.jpg',
+                                          'width' => 300,
+                                          'height' => 171,
+                                          'mime_type' => 'image/jpeg',
+                                          'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial-300x171.jpg'
+                                      ],
+                                      'full' => [
+                                          'file' => 'inteligencia-artificial.jpg',
+                                          'width' => 700,
+                                          'height' => 400,
+                                          'mime_type' => 'image/jpeg',
+                                          'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial.jpg'
+                                      ]
+                                  ],
+                                  'image_meta' => [
+                                      'aperture' => '0',
+                                      'credit' => '',
+                                      'camera' => '',
+                                      'caption' => '',
+                                      'created_timestamp' => '0',
+                                      'copyright' => '',
+                                      'focal_length' => '0',
+                                      'iso' => '0',
+                                      'shutter_speed' => '0',
+                                      'title' => '',
+                                      'orientation' => '0',
+                                      'keywords' => []
+                                  ]
+                              ],
+                              'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial.jpg',
+                          ]
+                      ],
+                  ]
+              ],
+              [
+                  'title' => 'Hola IA',
+                  'permalink' => 'http://example.com/hola-ia/',
+                  'img' => 'http://example.com/media/2017/12/inteligencia-artificial-500x400.jpg',
+                  'alttext' => 'Inteligencia Artificial.',
+              ]
+          ]
+        ];
+    }
 }
