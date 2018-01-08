@@ -21,18 +21,37 @@ class HashmapMapper implements HashmapMapperInterface
      * @var bool allows omit the spread ... special target key to spread returned data in target
      */
     protected $implicitSpread = false;
+
+    /**
+     * @var mixed allows pass not explicit named keys in rules to target object
+     */
+    protected $passNotMatchedKeys = false;
     
     public function __construct($rules, $options = [])
     {
         $this->rules = $rules;
-        if(!is_null($options) && isset($options['implicitSpread']) && $options['implicitSpread']) {
+        $this->processOptions($options);
+    }
+
+    protected function processOptions($options)
+    {
+        if(empty($options)) {
+            return;
+        }
+        if(isset($options['implicitSpread']) && $options['implicitSpread']) {
             $this->implicitSpread = true;
         }
+        if(isset($options['passNotMatchedKeys']) && $options['passNotMatchedKeys']) {
+            $this->passNotMatchedKeys = true;
+        }
+
     }
     
     public function map($hashmap, $sourceContext = null)
     {
         $this->mapped = [];
+        $this->maybePassToTargetUnMatchedKeys($hashmap);
+
         array_walk($this->rules, function($rule, $key, $hashmap) use($sourceContext) {
             if(array_key_exists($key, $hashmap)) {
                 $this->sourceKeyMatched = $key;
@@ -87,4 +106,16 @@ class HashmapMapper implements HashmapMapperInterface
         $this->mapped[$targetKey] = $returnValue;
     }
 
+    protected function maybePassToTargetUnMatchedKeys($hashmap)
+    {
+        if(!$this->passNotMatchedKeys) {
+            return;
+        }
+        array_walk($hashmap, function($value, $key, $ruleKeys) {
+            if(in_array($key, $ruleKeys)) {
+                return;
+            }
+            $this->mapped[$key] = $value;
+        }, array_keys($this->rules));
+    }
 }
