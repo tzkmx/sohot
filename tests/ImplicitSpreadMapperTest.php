@@ -1,6 +1,7 @@
 <?php
 
 namespace Jefrancomix\Sohot\Test;
+
 use PHPUnit\Framework\TestCase;
 use Jefrancomix\Sohot\HashmapMapper as HM;
 
@@ -20,7 +21,7 @@ class ImplicitSpreadMapperTest extends TestCase
             'taxonomy' => 'category',
         ];
         $source = [
-            'wp:term' => [ $termData ],
+            'wp:term' => [$termData],
         ];
         $expectedTarget = $termData;
 
@@ -31,7 +32,7 @@ class ImplicitSpreadMapperTest extends TestCase
         $mockAux->expects($this->once())
             ->method('mapperCallable')
             ->with(
-                $this->equalTo([ 0 => $termData ]),
+                $this->equalTo([0 => $termData]),
                 $this->equalTo($source)
             )->willReturn($termData);
 
@@ -45,13 +46,13 @@ class ImplicitSpreadMapperTest extends TestCase
      */
     public function testHashMapperReusedReturnsOk($source, $expected)
     {
-        $options = [ 'implicitSpread' => true ];
+        $options = ['implicitSpread' => true];
 
         $mediaMapper = new HM([
-            'wp:featuredmedia' => function($featuredMedia){
+            'wp:featuredmedia' => function ($featuredMedia) {
                 $media = $featuredMedia[0];
-                foreach($media['media_details']['sizes'] as $key => $size) {
-                    if($key === 'thumbnail') {
+                foreach ($media['media_details']['sizes'] as $key => $size) {
+                    if ($key === 'thumbnail') {
                         $pictureUrl = $size['source_url'];
                     }
                 }
