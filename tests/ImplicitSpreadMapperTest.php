@@ -4,9 +4,32 @@ namespace Jefrancomix\Sohot\Test;
 
 use PHPUnit\Framework\TestCase;
 use Jefrancomix\Sohot\HashmapMapper as HM;
+use function Jefrancomix\Sohot\compose;
 
 class ImplicitSpreadMapperTest extends TestCase
 {
+    public function testSimpleImplicitSpread()
+    {
+        $termData = [
+          'id' => 31925,
+          'link' => 'http://example.com/category/test-term/',
+          'name' => 'Test term',
+          'slug' => 'test-term',
+          'taxonomy' => 'category',
+        ];
+        $source = [
+          'wp:term' => [$termData],
+        ];
+        $expectedTarget = $termData;
+
+        $hm = new HM([
+          'wp:term' => compose('Jefrancomix\Sohot\head', 'Jefrancomix\Sohot\identity'),
+        ], ['implicitSpread' => true]);
+
+        $target = $hm->map($source);
+
+        $this->assertEquals($expectedTarget, $target);
+    }
     public function testSpreadCallableMapping()
     {
         $mockAux = $this->getMockBuilder(stdClass::class)

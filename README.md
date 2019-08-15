@@ -122,4 +122,52 @@ array (
 */
 ```
 
-## Implicit spread
+## Implicit spread (not specifying '...' key)
+
+If you need all the dictionaries inside top level keys be spread into the
+target, rather than writing your mapping spec as a tuple, you can give it
+only a callable, specifying the option `implicitSpread => true` in the
+constructor to the Mapper functor.
+
+```php
+$source = [
+    'wp:term' => [
+        [
+            'id' => 31925,
+            'link' => 'http://example.com/category/test-term/',
+            'name' => 'Test term',
+            'slug' => 'test-term',
+            'taxonomy' => 'category',
+        ]
+    ],
+];
+
+$hm = new HM(
+    [
+        'wp:term' => compose('Jefrancomix\Sohot\head', 'Jefrancomix\Sohot\identity'),
+    ],
+    [
+        'implicitSpread' => true
+    ]
+);
+
+$target = $hm->map($source);
+
+var_dump($target);
+
+/* Result:
+array(5) {
+  'id' =>
+  int(31925)
+  'link' =>
+  string(38) "http://example.com/category/test-term/"
+  'name' =>
+  string(9) "Test term"
+  'slug' =>
+  string(9) "test-term"
+  'taxonomy' =>
+  string(8) "category"
+}
+*/
+ ``` 
+
