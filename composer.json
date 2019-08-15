@@ -6,6 +6,7 @@
         "phpunit/phpunit": "^5||^6"
     },
     "autoload": {
+        "files": [ "src/functions.php" ],
         "psr-4": { "Jefrancomix\\Sohot\\": "src/" }
     },
     "license": "MIT",

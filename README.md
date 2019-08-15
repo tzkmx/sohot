@@ -85,3 +85,41 @@ var_dump($target);
  */
 ```
 
+## Spread Operator Mapping with Callable
+
+If you want to take a key with subkeys of the source and _spread it_ (copy
+the dictionary of key and values it contains) on the target hashmap, you
+can pass a tuple with the string `'...'` as the target key, and your chosen callable.
+
+```php
+$source = [
+    'wp:term' => [
+         'id' => 31925,
+         'link' => 'http://example.com/category/test-term/',
+         'name' => 'Test term',
+         'slug' => 'test-term',
+         'taxonomy' => 'category',
+    ],
+    'ignored' => 'right'
+];
+
+$mapper = new HM([
+    'wp:term' => ['...', 'Jefrancomix\Sohot\identity']
+]);
+
+$target = $mapper->map($source);
+
+var_export($target);
+    
+/* Result:
+array (
+  'id' => 31925,
+  'link' => 'http://example.com/category/test-term/',
+  'name' => 'Test term',
+  'slug' => 'test-term',
+  'taxonomy' => 'category',
+)
+*/
+```
+
+## Implicit spread
