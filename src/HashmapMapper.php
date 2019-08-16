@@ -34,6 +34,11 @@ class HashmapMapper implements HashmapMapperInterface
         $this->processOptions($options);
     }
 
+    public function __invoke($hashmap, $sourceContext = null)
+    {
+        $this->map($hashmap, $sourceContext);
+    }
+
     protected function processOptions($options)
     {
         if (empty($options)) {

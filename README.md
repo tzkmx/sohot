@@ -203,4 +203,34 @@ array(5) {
 }
 */
  ``` 
+## Functional use of HashMapper
+
+HashMapper offers a very simple interface, just the `map` method on an instance
+(there aren't extra methods, all the behaviour is configured at instantiation).
+It is immutable and this way is almost like a Closure, however it's somewhat
+awkward calling it with the `map` in every case.
+
+### Call a HashMapper as Functor object
+
+For better reuse, now offers through the `__invoke` magic, a simpler way to use
+it to map a collection of associative arrays, as `array_map`, `array_reduce` or
+`Collection::map` (from `Illuminate\Support`). 
+
+### Function to build a new HashMapper quickly
+
+For even easier use, you can now use the `hashMapper` function, passing it the
+same arguments of the class constructor, and get an instance ready to apply.
+
+```php
+echo json_encode(array_map(
+    hashMapper(['pdfUrl' => 'url']),
+    $arrayOfAssociativeArraysWithPdfUrlKey
+));
+
+/* example result:
+[
+    { "url": "..." },
+    { "url": "..." }
+]
+```
 

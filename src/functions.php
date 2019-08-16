@@ -18,3 +18,8 @@ function head(array $items)
 {
     return $items[0];
 }
+
+function hashMapper($rules, $options = []): HashmapMapper
+{
+    return new HashmapMapper($rules, $options);
+}
