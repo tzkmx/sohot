@@ -1,6 +1,7 @@
 <?php
 
 namespace Jefrancomix\Sohot\Test;
+
 use PHPUnit\Framework\TestCase;
 use Jefrancomix\Sohot\HashmapMapper as HM;
 
@@ -12,17 +13,17 @@ class ImplicitPassNotMatchedOptionsMapperTest extends TestCase
     public function testNotMatchedOptionsSimplyPassToTargetHashmap($source, $expected, $passNotMatchedKeys)
     {
         $mapper = new HM([
-            'matched' => ['matchedReverse', function($array) {
+            'matched' => ['matchedReverse', function ($array) {
                 return array_reverse($array);
             }],
-            'matchedMap' => ['matchedToLowercase', function($array) {
-                return array_map(function($letter) {
+            'matchedMap' => ['matchedToLowercase', function ($array) {
+                return array_map(function ($letter) {
                     return strtolower($letter);
                 }, $array);
             }],
         ], ['passNotMatchedKeys' => $passNotMatchedKeys]);
 
-        $this->assertEquals($expected, $mapper->map($source));
+        $this->assertEquals($expected, $mapper->apply($source));
     }
 
     public function provideExamplesExplicitAndImplicitPass()
@@ -63,17 +64,16 @@ class ImplicitPassNotMatchedOptionsMapperTest extends TestCase
     public function testGetMapperForCollectionOfSameShapedHashmaps()
     {
         $mapper = new HM([
-            'date' => ['date_string', function($date) {
+            'date' => ['date_string', function ($date) {
                 return $date->format(DATE_ISO8601);
             }],
-            'title' => ['title', function($title) {
+            'title' => ['title', function ($title) {
                 return $title['rendered'];
             }],
-            'link' => ['url', function($slug) {
+            'link' => ['url', function ($slug) {
                 return "http://example.com/{$slug}/";
-            }]
+            }],
         ]);
-
 
         $source = [
             '1' => [
@@ -109,11 +109,10 @@ class ImplicitPassNotMatchedOptionsMapperTest extends TestCase
                 'url' => 'http://example.com/iguala-mass-kidnapping/',
             ],
         ];
-        foreach($source as $key => $item) {
-            $this->assertEquals($expected[$key], $mapper->map($item));
+        foreach ($source as $key => $item) {
+            $this->assertEquals($expected[$key], $mapper->apply($item));
         }
         $collectionMapper = $mapper->getCollectionMapper();
-        $this->assertEquals($expected, $collectionMapper->map($source));
+        $this->assertEquals($expected, $collectionMapper->apply($source));
     }
-
 }

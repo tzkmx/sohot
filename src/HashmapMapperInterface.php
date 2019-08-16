@@ -2,7 +2,6 @@
 
 namespace Jefrancomix\Sohot;
 
-
 interface HashmapMapperInterface
 {
     /**
@@ -10,7 +9,10 @@ interface HashmapMapperInterface
      * @param mixed $sourceContext the HashMap onto which the map is applied
      * @return mixed
      */
-    public function map($object, $sourceContext = null);
+    public function apply($object, $sourceContext = null);
 
+    /**
+     * @return HashmapMapperInterface a mapper that applies this same rules to every item passed in an array
+     */
     public function getCollectionMapper();
 }
