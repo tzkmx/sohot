@@ -6,6 +6,7 @@
         "phpunit/phpunit": "^5||^6"
     },
     "autoload": {
+        "files": [ "src/functions.php" ],
         "psr-4": { "Jefrancomix\\Sohot\\": "src/" }
     },
     "license": "MIT",
@@ -15,7 +16,7 @@
             "email": "tezcatl@fedoraproject.org"
         }
     ],
-    "require": {
-        "php": "~5.6||~7.0"
+    "config": {
+        "php": "^7.0"
     }
 }

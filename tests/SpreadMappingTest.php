@@ -41,6 +41,30 @@ class SpreadMappingTest extends TestCase
         $this->assertEquals($expectedTarget, $target);
     }
 
+    public function testSpread()
+    {
+        $termData = [
+          'id' => 31925,
+          'link' => 'http://example.com/category/test-term/',
+          'name' => 'Test term',
+          'slug' => 'test-term',
+          'taxonomy' => 'category',
+        ];
+        $source = [
+            'wp:term' => $termData,
+            'ignored' => 'right',
+        ];
+        $expectedTarget = $termData;
+
+        $hm = new HM([
+          'wp:term' => ['...', 'Jefrancomix\Sohot\identity'],
+        ]);
+
+        $target = $hm->apply($source);
+
+        $this->assertEquals($expectedTarget, $target);
+    }
+
     /**
      * @dataProvider spreadMappingDataProvider
      */
