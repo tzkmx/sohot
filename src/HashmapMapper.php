@@ -61,6 +61,11 @@ class HashmapMapper implements HashmapMapperInterface
         return $this->mapped;
     }
 
+    public function __invoke()
+    {
+        return call_user_func_array([$this, 'apply'], func_get_args());
+    }
+
     protected function applyRule($rule, $hashmap, $sourceContext = null)
     {
         if (is_array($rule)) {
