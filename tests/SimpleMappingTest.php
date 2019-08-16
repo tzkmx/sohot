@@ -117,20 +117,21 @@ class SimpleMappingTest extends TestCase
 
         $mockMapper = new class implements HashmapMapperInterface {
             protected $calls = [];
-            function apply($hashmap, $sourceContext = null)
+            public function apply($hashmap, $sourceContext = null)
             {
                 $this->calls[] = func_get_args();
-                return [ 'sourceKey' => ['value' => 'was converted'] ];
+                return ['sourceKey' => ['value' => 'was converted']];
             }
-            function checkWasCalled()
+            public function checkWasCalled()
             {
                 if (empty($this->calls)) {
                     throw new \RuntimeException('mockMapper was not called');
                 }
                 return $this->calls;
             }
-            function getCollectionMapper()
-            {}
+            public function getCollectionMapper()
+            {
+            }
         };
 
         $realMapper = new HM([

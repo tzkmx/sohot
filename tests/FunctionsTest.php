@@ -3,7 +3,10 @@
 namespace Jefrancomix\Sohot\Test;
 
 use \PHPUnit\Framework\TestCase;
-use function Jefrancomix\Sohot\{hashMapper, identity, head, compose};
+use function Jefrancomix\Sohot\hashMapper;
+use function Jefrancomix\Sohot\identity;
+use function Jefrancomix\Sohot\head;
+use function Jefrancomix\Sohot\compose;
 
 class FunctionsTest extends TestCase
 {
@@ -30,7 +33,7 @@ class FunctionsTest extends TestCase
         $list = [
             ['A', 'B'],
             2,
-            3
+            3,
         ];
 
         $composedFn = compose('Jefrancomix\Sohot\head', 'Jefrancomix\Sohot\head');
@@ -47,20 +50,20 @@ class FunctionsTest extends TestCase
         $list = [
             [
                 'head' => 1,
-                'tail' => 2
+                'tail' => 2,
             ],
             [
                 'head' => 3,
-                'tail' => 4
+                'tail' => 4,
             ],
         ];
         $mapper = hashMapper(['head' => 'fst', 'tail' => 'snd']);
 
-        $expectedFirstItemMapped = [ 'fst' => 1, 'snd' => 2];
+        $expectedFirstItemMapped = ['fst' => 1, 'snd' => 2];
 
         $this->assertEquals($expectedFirstItemMapped, $mapper($list[0]));
 
-        $expectedTransformedList = [ [ 'fst' => 1, 'snd' => 2], [ 'fst' => 3, 'snd' => 4] ];
+        $expectedTransformedList = [['fst' => 1, 'snd' => 2], ['fst' => 3, 'snd' => 4]];
 
         $listMapper = $mapper->getCollectionMapper();
 
