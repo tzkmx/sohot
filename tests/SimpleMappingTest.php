@@ -1,6 +1,7 @@
 <?php
 
 namespace Jefrancomix\Sohot\Test;
+
 use PHPUnit\Framework\TestCase;
 use Jefrancomix\Sohot\HashmapMapper as HM;
 
@@ -10,10 +11,10 @@ class SimpleMappingTest extends TestCase
     {
         $hm = new HM(['origin' => 'roots']);
 
-        $origin = [ 'origin' => 'Africa' ];
+        $origin = ['origin' => 'Africa'];
         $expected = ['roots' => 'Africa'];
 
-        $transformed = $hm->map($origin);
+        $transformed = $hm->apply($origin);
 
         $this->assertEquals($expected, $transformed);
     }
@@ -25,7 +26,7 @@ class SimpleMappingTest extends TestCase
     {
         $hm = new HM($transformRules);
 
-        $transformed = $hm->map($source);
+        $transformed = $hm->apply($source);
 
         $this->assertEquals($expected, $transformed);
     }
@@ -33,29 +34,29 @@ class SimpleMappingTest extends TestCase
     {
         return [
             'implode' => [
-                [ 'tribe' => 'Mexica', 'roots' => ['Chichimeca','Acolhua'] ],
+                ['tribe' => 'Mexica', 'roots' => ['Chichimeca','Acolhua']],
                 [
                     'tribe' => 'nation',
-                    'roots' => ['mixOf', function($subkey) {
+                    'roots' => ['mixOf', function ($subkey) {
                         return implode(', ', $subkey);
                     }],
                 ],
-                [ 'nation' => 'Mexica', 'mixOf' => 'Chichimeca, Acolhua' ],
+                ['nation' => 'Mexica', 'mixOf' => 'Chichimeca, Acolhua'],
             ],
             'sprintf' => [
                 [
                     'place' => 'San Salvador Atenco',
-                    'date' => [ 'year' => 2006, 'month' => 5, 'day' => 4, ],
+                    'date' => ['year' => 2006, 'month' => 5, 'day' => 4],
                 ],
                 [
                     'place' => 'Caso CIDH',
                     'date' => [
                         'fecha',
-                        function($date) {
+                        function ($date) {
                             extract($date);
                             $date = \DateTime::createFromFormat('Y/m/d', "{$year}/{$month}/{$day}");
                             return $date->format('Y-m-d');
-                        }
+                        },
                     ],
                 ],
                 [
@@ -66,7 +67,6 @@ class SimpleMappingTest extends TestCase
         ];
     }
 
-
     public function testCallablesCalledWithSubkeyAndHashmap()
     {
         $mockAux = $this->getMockBuilder(stdClass::class)
@@ -75,8 +75,8 @@ class SimpleMappingTest extends TestCase
 
         $source = [
             'name' => 'Innocent Child',
-            'birth' => [ 'date' => '1981 '],
-            'death' => [ 'date' => '2006' ],
+            'birth' => ['date' => '1981 '],
+            'death' => ['date' => '2006'],
         ];
         $expectedTarget = [
             'alias' => 'Innocent Child',
@@ -85,8 +85,8 @@ class SimpleMappingTest extends TestCase
         ];
         $hm = new HM([
             'name' => 'alias',
-            'birth' => [ 'yearOfBirth', [$mockAux, 'getBirth'] ],
-            'death' => [ 'yearOfDeath', [$mockAux, 'getDeath'] ],
+            'birth' => ['yearOfBirth', [$mockAux, 'getBirth']],
+            'death' => ['yearOfDeath', [$mockAux, 'getDeath']],
         ]);
 
         $mockAux->expects($this->once())
@@ -103,7 +103,7 @@ class SimpleMappingTest extends TestCase
                 $this->equalTo($source)
             )->willReturn(2006);
 
-        $target = $hm->map($source);
+        $target = $hm->apply($source);
 
         $this->assertEquals($expectedTarget, $target);
     }
@@ -111,39 +111,39 @@ class SimpleMappingTest extends TestCase
     public function testReuseHashMapperAsRuleMapper()
     {
         $source = [
-            'sourceKey' => ['value' => 'to pass to HashMapper']
+            'sourceKey' => ['value' => 'to pass to HashMapper'],
         ];
         $mockMapper = $this->createMock(HM::class);
         $mockMapper->expects($this->once())
-            ->method('map')
+            ->method('apply')
             ->with(
                 $this->equalTo(['value' => 'to pass to HashMapper']),
                 $this->equalTo($source)
             );
 
         $realMapper = new HM([
-            'sourceKey' => ['_', $mockMapper]
+            'sourceKey' => ['_', $mockMapper],
         ]);
 
-        $realMapper->map($source);
+        $realMapper->apply($source);
     }
 
     public function testHashMapperReusedReturnsOk()
     {
         $source = [
-            'sourceKey' => [ 'value' => 'to pass to HashMapper' ],
+            'sourceKey' => ['value' => 'to pass to HashMapper'],
         ];
         $childMapper = new HM([
-            'value' => ['targetValue', function($sourceValue){
+            'value' => ['targetValue', function ($sourceValue) {
                 return str_replace('to pass', 'passed', $sourceValue);
             }],
         ]);
         $parentMapper = new HM([
-            'sourceKey' => ['targetKey', $childMapper]
+            'sourceKey' => ['targetKey', $childMapper],
         ]);
         $expected = [
-            'targetKey' => ['targetValue' => 'passed to HashMapper']
+            'targetKey' => ['targetValue' => 'passed to HashMapper'],
         ];
-        $this->assertEquals($expected, $parentMapper->map($source));
+        $this->assertEquals($expected, $parentMapper->apply($source));
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Jefrancomix\Sohot\Test;
+
 use PHPUnit\Framework\TestCase;
 use Jefrancomix\Sohot\HashmapMapper as HM;
 
@@ -20,22 +21,22 @@ class SpreadMappingTest extends TestCase
             'taxonomy' => 'category',
         ];
         $source = [
-            'wp:term' => [ $termData ],
+            'wp:term' => [$termData],
         ];
         $expectedTarget = $termData;
 
         $hm = new HM([
-            'wp:term' => [ '...', [$mockAux, 'mapperCallable'] ],
+            'wp:term' => ['...', [$mockAux, 'mapperCallable']],
         ]);
 
         $mockAux->expects($this->once())
             ->method('mapperCallable')
             ->with(
-                $this->equalTo([ 0 => $termData ]),
+                $this->equalTo([0 => $termData]),
                 $this->equalTo($source)
             )->willReturn($termData);
 
-        $target = $hm->map($source);
+        $target = $hm->apply($source);
 
         $this->assertEquals($expectedTarget, $target);
     }
@@ -46,10 +47,10 @@ class SpreadMappingTest extends TestCase
     public function testHashMapperReusedReturnsOk($source, $expected)
     {
         $mediaMapper = new HM([
-            'wp:featuredmedia' => ['...', function($featuredMedia){
+            'wp:featuredmedia' => ['...', function ($featuredMedia) {
                 $media = $featuredMedia[0];
-                foreach($media['media_details']['sizes'] as $key => $size) {
-                    if($key === 'thumbnail') {
+                foreach ($media['media_details']['sizes'] as $key => $size) {
+                    if ($key === 'thumbnail') {
                         $pictureUrl = $size['source_url'];
                     }
                 }
@@ -65,7 +66,7 @@ class SpreadMappingTest extends TestCase
             '_embedded' => ['...', $mediaMapper],
         ]);
 
-        $this->assertEquals($expected, $postMapper->map($source));
+        $this->assertEquals($expected, $postMapper->apply($source));
     }
 
     public function spreadMappingDataProvider()
@@ -84,11 +85,11 @@ class SpreadMappingTest extends TestCase
                               'type' => 'attachment',
                               'link' => 'http://example.com/inteligencia-artificial/',
                               'title' => [
-                                  'rendered' => 'inteligencia artificial'
+                                  'rendered' => 'inteligencia artificial',
                               ],
                               'author' => 108,
                               'caption' => [
-                                  'rendered' => '<p>Inteligencia Artificial</p>\n'
+                                  'rendered' => '<p>Inteligencia Artificial</p>\n',
                               ],
                               'alt_text' => 'Inteligencia Artificial.',
                               'media_type' => 'image',
@@ -103,22 +104,22 @@ class SpreadMappingTest extends TestCase
                                           'width' => 500,
                                           'height' => 400,
                                           'mime_type' => 'image/jpeg',
-                                          'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial-500x400.jpg'
+                                          'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial-500x400.jpg',
                                       ],
                                       'medium' => [
                                           'file' => 'inteligencia-artificial-300x171.jpg',
                                           'width' => 300,
                                           'height' => 171,
                                           'mime_type' => 'image/jpeg',
-                                          'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial-300x171.jpg'
+                                          'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial-300x171.jpg',
                                       ],
                                       'full' => [
                                           'file' => 'inteligencia-artificial.jpg',
                                           'width' => 700,
                                           'height' => 400,
                                           'mime_type' => 'image/jpeg',
-                                          'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial.jpg'
-                                      ]
+                                          'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial.jpg',
+                                      ],
                                   ],
                                   'image_meta' => [
                                       'aperture' => '0',
@@ -132,21 +133,21 @@ class SpreadMappingTest extends TestCase
                                       'shutter_speed' => '0',
                                       'title' => '',
                                       'orientation' => '0',
-                                      'keywords' => []
-                                  ]
+                                      'keywords' => [],
+                                  ],
                               ],
                               'source_url' => 'http://example.com/media/2017/12/inteligencia-artificial.jpg',
-                          ]
+                          ],
                       ],
-                  ]
+                  ],
               ],
               [
                   'title' => 'Hola IA',
                   'permalink' => 'http://example.com/hola-ia/',
                   'img' => 'http://example.com/media/2017/12/inteligencia-artificial-500x400.jpg',
                   'alttext' => 'Inteligencia Artificial.',
-              ]
-          ]
+              ],
+          ],
         ];
     }
 }
