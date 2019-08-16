@@ -2,6 +2,7 @@
 
 namespace Jefrancomix\Sohot\Test;
 
+use Jefrancomix\Sohot\HashmapMapperInterface;
 use PHPUnit\Framework\TestCase;
 use Jefrancomix\Sohot\HashmapMapper as HM;
 
@@ -113,19 +114,32 @@ class SimpleMappingTest extends TestCase
         $source = [
             'sourceKey' => ['value' => 'to pass to HashMapper'],
         ];
-        $mockMapper = $this->createMock(HM::class);
-        $mockMapper->expects($this->once())
-            ->method('apply')
-            ->with(
-                $this->equalTo(['value' => 'to pass to HashMapper']),
-                $this->equalTo($source)
-            );
+
+        $mockMapper = new class implements HashmapMapperInterface {
+            protected $calls = [];
+            function apply($hashmap, $sourceContext = null)
+            {
+                $this->calls[] = func_get_args();
+                return [ 'sourceKey' => ['value' => 'was converted'] ];
+            }
+            function checkWasCalled()
+            {
+                if (empty($this->calls)) {
+                    throw new \RuntimeException('mockMapper was not called');
+                }
+                return $this->calls;
+            }
+            function getCollectionMapper()
+            {}
+        };
 
         $realMapper = new HM([
             'sourceKey' => ['_', $mockMapper],
         ]);
 
         $realMapper->apply($source);
+
+        $this->assertEquals(1, count($mockMapper->checkWasCalled()));
     }
 
     public function testHashMapperReusedReturnsOk()

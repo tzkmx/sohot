@@ -34,11 +34,6 @@ class HashmapMapper implements HashmapMapperInterface
         $this->processOptions($options);
     }
 
-    public function __invoke($hashmap, $sourceContext = null)
-    {
-        $this->apply($hashmap, $sourceContext);
-    }
-
     protected function processOptions($options)
     {
         if (empty($options)) {
@@ -64,6 +59,11 @@ class HashmapMapper implements HashmapMapperInterface
             }
         }, $hashmap);
         return $this->mapped;
+    }
+
+    public function __invoke()
+    {
+        return call_user_func_array([$this, 'apply'], func_get_args());
     }
 
     protected function applyRule($rule, $hashmap, $sourceContext = null)
