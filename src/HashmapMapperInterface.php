@@ -2,7 +2,6 @@
 
 namespace Jefrancomix\Sohot;
 
-
 interface HashmapMapperInterface
 {
     /**
