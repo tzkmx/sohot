@@ -35,7 +35,7 @@ class ImplicitSpreadMapperTest extends TestCase
                 $this->equalTo($source)
             )->willReturn($termData);
 
-        $target = $hm->map($source);
+        $target = $hm->apply($source);
 
         $this->assertEquals($expectedTarget, $target);
     }
@@ -67,6 +67,6 @@ class ImplicitSpreadMapperTest extends TestCase
             '_embedded' => $mediaMapper,
         ], $options);
 
-        $this->assertEquals($expected, $postMapper->map($source));
+        $this->assertEquals($expected, $postMapper->apply($source));
     }
 }

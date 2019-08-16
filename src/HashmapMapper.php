@@ -48,7 +48,7 @@ class HashmapMapper implements HashmapMapperInterface
 
     }
     
-    public function map($hashmap, $sourceContext = null)
+    public function apply($hashmap, $sourceContext = null)
     {
         $this->mapped = [];
         $this->maybePassToTargetUnmatchedKeys($hashmap);
@@ -114,7 +114,7 @@ class HashmapMapper implements HashmapMapperInterface
             return call_user_func($actualRule, $hashmapValueAtKey, $sourceContext);
         }
         if($actualRule instanceof HashmapMapperInterface) {
-            return $actualRule->map($hashmapValueAtKey, $sourceContext);
+            return $actualRule->apply($hashmapValueAtKey, $sourceContext);
         }
     }
 

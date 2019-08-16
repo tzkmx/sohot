@@ -22,7 +22,7 @@ class ImplicitPassNotMatchedOptionsMapperTest extends TestCase
             }],
         ], ['passNotMatchedKeys' => $passNotMatchedKeys]);
 
-        $this->assertEquals($expected, $mapper->map($source));
+        $this->assertEquals($expected, $mapper->apply($source));
     }
 
     public function provideExamplesExplicitAndImplicitPass()
@@ -110,10 +110,10 @@ class ImplicitPassNotMatchedOptionsMapperTest extends TestCase
             ],
         ];
         foreach($source as $key => $item) {
-            $this->assertEquals($expected[$key], $mapper->map($item));
+            $this->assertEquals($expected[$key], $mapper->apply($item));
         }
         $collectionMapper = $mapper->getCollectionMapper();
-        $this->assertEquals($expected, $collectionMapper->map($source));
+        $this->assertEquals($expected, $collectionMapper->apply($source));
     }
 
 }

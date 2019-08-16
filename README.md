@@ -22,7 +22,7 @@ $source = ['origin' => 'Africa'];
  */
 
 $mapper = new HM(['origin' => 'roots']);
-$target = $mapper->map($source);
+$target = $mapper->apply($source);
 
 var_dump($target);
 /*
@@ -71,7 +71,7 @@ $mapper = new HM([
     ],
 ]);
 
-$target = $mapper->map($source);
+$target = $mapper->apply($source);
 
 var_dump($target);
 /*

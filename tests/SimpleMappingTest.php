@@ -13,7 +13,7 @@ class SimpleMappingTest extends TestCase
         $origin = [ 'origin' => 'Africa' ];
         $expected = ['roots' => 'Africa'];
 
-        $transformed = $hm->map($origin);
+        $transformed = $hm->apply($origin);
 
         $this->assertEquals($expected, $transformed);
     }
@@ -25,7 +25,7 @@ class SimpleMappingTest extends TestCase
     {
         $hm = new HM($transformRules);
 
-        $transformed = $hm->map($source);
+        $transformed = $hm->apply($source);
 
         $this->assertEquals($expected, $transformed);
     }
@@ -103,7 +103,7 @@ class SimpleMappingTest extends TestCase
                 $this->equalTo($source)
             )->willReturn(2006);
 
-        $target = $hm->map($source);
+        $target = $hm->apply($source);
 
         $this->assertEquals($expectedTarget, $target);
     }
@@ -115,7 +115,7 @@ class SimpleMappingTest extends TestCase
         ];
         $mockMapper = $this->createMock(HM::class);
         $mockMapper->expects($this->once())
-            ->method('map')
+            ->method('apply')
             ->with(
                 $this->equalTo(['value' => 'to pass to HashMapper']),
                 $this->equalTo($source)
@@ -125,7 +125,7 @@ class SimpleMappingTest extends TestCase
             'sourceKey' => ['_', $mockMapper]
         ]);
 
-        $realMapper->map($source);
+        $realMapper->apply($source);
     }
 
     public function testHashMapperReusedReturnsOk()
@@ -144,6 +144,6 @@ class SimpleMappingTest extends TestCase
         $expected = [
             'targetKey' => ['targetValue' => 'passed to HashMapper']
         ];
-        $this->assertEquals($expected, $parentMapper->map($source));
+        $this->assertEquals($expected, $parentMapper->apply($source));
     }
 }
