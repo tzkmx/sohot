@@ -30,6 +30,7 @@ class ImplicitSpreadMapperTest extends TestCase
 
         $this->assertEquals($expectedTarget, $target);
     }
+
     public function testSpreadCallableMapping()
     {
         $mockAux = $this->getMockBuilder(stdClass::class)

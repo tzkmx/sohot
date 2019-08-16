@@ -85,6 +85,39 @@ var_dump($target);
  */
 ```
 
+## Use another HashMapper 
+
+If you have a complex subkey that is not easily mapped with a simple function,
+you could use another HashMapper with the spec for that subkey, as the mapper
+for that key.
+
+```php
+$source = [
+    'sourceKey' => [
+        'value' => 'to pass to HashMapper',
+        'ignored' => 'it should not appear'
+    ],
+];
+
+$sourceKeyMapper = new HM([ 'value' => 'legend' ]);
+
+$sourceMapper = new HM([ 'sourceKey' => $sourceKeyMapper ]);
+
+$target = $sourceMapper->map($source);
+
+var_dump($target);
+
+/*
+array(1) {
+  'sourceKey' =>
+  array(1) {
+    'legend' =>
+    string(21) "to pass to HashMapper"
+  }
+}
+*/
+```
+
 ## Spread Operator Mapping with Callable
 
 If you want to take a key with subkeys of the source and _spread it_ (copy
